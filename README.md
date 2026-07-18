@@ -1,6 +1,14 @@
-25/02/2026
+# ⚡ mcp-SADE-ME ⚡
 
-# mcp-SADE-ME
+```text
+  __  __  ____  ____         ____    _    ____  _____         __  __ _____ 
+ |  \/  |/ ___||  _ \       / ___|  / \  |  _ \| ____|       |  \/  | ____|
+ | |\/| | |    | |_) |_____ \___ \ / _ \ | | | |  _|   _____ | |\/| |  _|  
+ | |  | | |___ |  __/|_____| ___) / ___ \| |_| | |___ |_____|| |  | | |___ 
+ |_|  |_|\____||_|          |____/_/   \_\____/|_____|       |_|  |_|_____|
+```
+
+> **Smart Energy Analytics for AI Agents** — Servidor canónico de **Model Context Protocol (MCP)** en Python que dota a los agentes de IA de acceso en tiempo real a la demanda eléctrica, datos climatológicos regionales y métricas del mix de generación energética.
 
 Proyecto demostrativo y plantilla de integración de **MCP (Model Context Protocol)** para agentes de Inteligencia Artificial. Este repositorio sirve como ejemplo práctico de cómo construir un servidor MCP en Python para dotar a agentes con capacidades especializadas para consultar, analizar y resumir datos energéticos reales.
 
@@ -103,7 +111,6 @@ PYTHONPATH=. .venv/bin/python chat_test_energy.py
 ## Estructura y Notas de Implementación
 
 *   `mcp_servers/energy_data/server_data2.py`: **Archivo canónico y fuente de verdad**. Incorpora timeouts refinados, reintentos robustos con backoff exponencial, y observabilidad.
-*   `mcp_servers/energy_data/server_data.py`: **Obsoleto / Deprecado**. Se mantiene únicamente para histórico de referencia de código y no debe ser utilizado.
 *   `main.py`: Punto de entrada para levantar el servidor MCP mediante transporte `stdio`.
 *   `chat_runner.py`: Motor local para orquestar flujos de interacción energética de forma simplificada.
 
