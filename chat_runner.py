@@ -1,6 +1,25 @@
 import asyncio
 import json
+import os
+import sys
 from typing import Any
+
+# Try importing rich for visual enhancement
+try:
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.text import Text
+    from rich.syntax import Syntax
+    from rich.box import ROUNDED
+    console = Console()
+except ImportError:
+    class ConsoleFallback:
+        def print(self, *args, **kwargs):
+            print(*args)
+        def input(self, prompt):
+            return input(prompt)
+    console = ConsoleFallback()
+    Panel = Text = Syntax = ROUNDED = None
 
 from mcp_servers.energy_data.server_data2 import (
     get_daily_energy_context,
@@ -142,16 +161,54 @@ async def run_smoke_flow(period: str, location: str) -> dict[str, Any]:
 
 
 def main() -> None:
-    period = input("period (YYYY-MM-DD): ").strip()
-    location = input("location (City,CC): ").strip()
+    if Panel:
+        welcome_text = Text()
+        welcome_text.append("⚡ SADE-ME Local Data Runner ⚡\n", style="bold green")
+        welcome_text.append("Query live energy data directly from local APIs\n", style="italic dim cyan")
+        console.print(Panel(welcome_text, border_style="cyan", box=ROUNDED))
+    else:
+        print("--- SADE-ME Local Data Runner ---")
 
-    print("Type a prompt. Use 'exit' to quit.")
+    if Panel:
+        period = console.input("[bold yellow]📅 Ingrese la fecha (YYYY-MM-DD):[/bold yellow] ").strip()
+        location = console.input("[bold yellow]📍 Ingrese la ubicación (Ciudad,Pais):[/bold yellow] ").strip()
+    else:
+        period = input("period (YYYY-MM-DD): ").strip()
+        location = input("location (City,CC): ").strip()
+
+    if Panel:
+        console.print("\n[bold green]Escribe un prompt. Ejemplos:[/bold green]")
+        console.print("  • 'resumen' o 'summary' (genera un informe usando OpenAI)")
+        console.print("  • 'datos' o 'raw' (muestra el JSON completo de demanda/clima/mix)")
+        console.print("  • Escribe 'exit' para salir.")
+    else:
+        print("Type a prompt. Use 'exit' to quit.")
+
     while True:
-        prompt = input("chat> ").strip()
+        try:
+            if Panel:
+                prompt = console.input("\n[bold cyan]query ➔[/bold cyan] ").strip()
+            else:
+                prompt = input("chat> ").strip()
+        except (KeyboardInterrupt, EOFError):
+            break
+
+        if not prompt:
+            continue
         if prompt.lower() in {"exit", "quit"}:
             break
+
+        if Panel:
+            console.print("[bold yellow]⏳ Recuperando datos y procesando consulta...[/bold yellow]")
+        
         result = asyncio.run(run_chat_action(prompt, period, location))
-        print(json.dumps(result, ensure_ascii=False))
+
+        if Syntax:
+            formatted_json = json.dumps(result, indent=2, ensure_ascii=False)
+            syntax_block = Syntax(formatted_json, "json", theme="monokai", word_wrap=True)
+            console.print(Panel(syntax_block, title="Query Response JSON", border_style="green"))
+        else:
+            print(json.dumps(result, ensure_ascii=False))
 
 
 if __name__ == "__main__":
